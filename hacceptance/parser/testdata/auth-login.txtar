@@ -1,0 +1,25 @@
+gh auth login
+---
+? Where do you use GitHub?  [Use arrows to move, type to filter]
+> GitHub.com
+  Other
+---
+
+select Other
+---
+? Where do you use GitHub? Other
+? Hostname: |
+---
+
+say my.ghes.com
+---
+? Hostname: my.ghes.com
+? What is your preferred protocol for Git operations on this host?  [Use arrows to move, type to filter]
+> HTTPS
+  SSH
+---
+
+select HTTPS
+---
+? Authenticate Git with your GitHub credentials? (Y/n) |
+---
