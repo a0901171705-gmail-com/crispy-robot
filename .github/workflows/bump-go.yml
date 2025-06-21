@@ -1,0 +1,17 @@
+name: Bump Go
+on:
+  schedule:
+    - cron: "0 3 * * *" # 3 AM UTC
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  bump-go:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Bump Go version
+        run: |
+          bash .github/workflows/scripts/bump-go.sh --apply go.mod
