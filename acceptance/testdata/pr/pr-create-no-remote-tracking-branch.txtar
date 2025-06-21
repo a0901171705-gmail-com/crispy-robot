@@ -1,0 +1,39 @@
+# Set up env vars
+env REPO=${SCRIPT_NAME}-${RANDOM_STRING}
+
+# Use gh as a credential helper
+exec gh auth setup-git
+
+# Create a repository with a file so it has a default branch
+exec gh repo create ${ORG}/${REPO} --add-readme --private
+
+# Defer upstream cleanup
+defer gh repo delete --yes ${ORG}/${REPO}
+
+# Create a fork
+exec gh repo fork ${ORG}/${REPO} --fork-name ${REPO}-fork
+
+# Defer fork cleanup
+defer gh repo delete --yes ${REPO}-fork
+
+# Clone both repos
+exec gh repo clone ${ORG}/${REPO}
+exec gh repo clone ${REPO}-fork
+
+# Create a feature branch on upstream
+cd ${REPO}
+exec git checkout -b feature-branch
+exec git push origin feature-branch
+
+# Prepare a branch to PR in the fork itself
+cd ../${REPO}-fork
+exec git checkout -b feature-branch
+exec git pull upstream feature-branch
+exec git commit --allow-empty -m 'Empty Commit'
+# Do not create a remote tracking branch when pushing (no -u)
+exec git push origin feature-branch
+
+# Create the PR
+env GH_DEBUG=api
+exec gh pr create --title 'Feature Title' --body 'Feature Body'
+stdout https://${GH_HOST}/${ORG}/${REPO}/pull/1
